@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     //WŁASNA TABELA RAPORTU
     for ($i = $dataCsv_length-1; $i > 0; $i--) {
-        if ($dataCsv[$i][$priceNettoIndex]!=="" ){        
+        if ($dataCsv[$i][$priceNettoIndex]!=="" && $dataCsv[$i][$countryVatIndex]!=="POLAND"){        
             $str = $dataCsv[$i][$dateIndex];
             $dateFix = explode("-",$str);
             $dataCsv[$i][11]=$dateFix[2]."-".$dateFix[1]."-".$dateFix[0];

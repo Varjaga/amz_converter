@@ -165,8 +165,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     //Zapisywanie sumy do raportu
-    $rows[0]["Suma netto w PLN"] = $totalNetto;
-    $rows[0]["Suma VAT w PLN"] = $totalVat;
+    $rows[1]["Suma netto w PLN"] = $totalNetto;
+    $rows[1]["Suma VAT w PLN"] = $totalVat;
 
     //EXPORT KONWERTOWANEGO RAPORTU DO PLIKU CSV
     array_to_csv_download($rows, "konwertowany_raport"."_".$dataCsv[$dataCsv_length-1][$dateIndex]."_".$dataCsv[1][$dateIndex].".csv", ',');

@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     //GLOBALNE ZMIENNE
     $rows = array(
-        array("Data sprzedazy", "Nr faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP")
+        array("Data sprzedazy", "Nr faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP", "Suma netto w PLN", "Suma VAT w PLN")
     );
 
     //POBIERAMY PLIK CSV
@@ -49,7 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $priceNettoIndex = 29;
     $priceVatIndex = 42;
     $countryVatIndex = 80;
-    $currencyIndex = 53; 
+    $currencyIndex = 53;
+    //Ilość miejsc po przecinku
+    $decimalPlaces = 2;
 
     //DATA POCZĄTKOWA
     $startDate = $dataCsv[$dataCsv_length-1][$dateIndex];
@@ -142,9 +144,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
             }
-            $priceNettoPln[$i] = round(($priceNetto[$i] * $rateNbp[$i]),4);
-            $priceVatPln[$i] = round(($priceVat[$i] * $rateNbp[$i]),4);
-            $suma = $suma + $priceNettoPln[$i]; 
+            $priceNettoPln[$i] = round(($priceNetto[$i] * $rateNbp[$i]),$decimalPlaces);
+            $priceVatPln[$i] = round(($priceVat[$i] * $rateNbp[$i]),$decimalPlaces);
+            //Sumowanie
+            $totalNetto = $totalNetto + $priceNettoPln[$i];
+            $totalVat = $totalVat + $priceVatPln[$i];
             
             //Tworzymy tabelę z danymi po konwertacji
             $rows[$i] = array();
@@ -159,6 +163,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $rows[$i]['DATA_KURSY_NBP'] = $dateNbp[$i];
         }
     }
+
+    //Zapisywanie sumy do raportu
+    $rows[0]["Suma netto w PLN"] = $totalNetto;
+    $rows[0]["Suma VAT w PLN"] = $totalVat;
 
     //EXPORT KONWERTOWANEGO RAPORTU DO PLIKU CSV
     array_to_csv_download($rows, "konwertowany_raport"."_".$dataCsv[$dataCsv_length-1][$dateIndex]."_".$dataCsv[1][$dateIndex].".csv", ',');

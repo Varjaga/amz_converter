@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     //GLOBALNE ZMIENNE
     $rows = array(
-        array("Data sprzedazy", "Nr faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP", "Suma netto w PLN", "Suma VAT w PLN")
+        array("Data sprzedazy", "Nr faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP")
     );
 
     //POBIERAMY PLIK CSV
@@ -164,9 +164,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+
     //Zapisywanie sumy do raportu
-    $rows[1]["Suma netto w PLN"] = $totalNetto;
-    $rows[1]["Suma VAT w PLN"] = $totalVat;
+    $rows[0]['WARTOSC_NETTO_PLN'] = $totalNetto;
+    $rows[0]['WARTOSC_PODATKU_VAT_PLN'] = $totalVat;
 
     //EXPORT KONWERTOWANEGO RAPORTU DO PLIKU CSV
     array_to_csv_download($rows, "konwertowany_raport"."_".$dataCsv[$dataCsv_length-1][$dateIndex]."_".$dataCsv[1][$dateIndex].".csv", ',');

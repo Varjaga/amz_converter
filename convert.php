@@ -29,8 +29,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     error_reporting(E_ERROR | E_PARSE);
 
     //GLOBALNE ZMIENNE
+
+    //wersja $rows bez sumowania
+    // $rows = array(
+    //     array("Data sprzedazy", "Nr faktury", "Link do pobrania faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP")
+    // );
+
+    //Wersja $rows z sumowaniem
     $rows = array(
-        array("Data sprzedazy", "Nr faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP")
+        array("Data sprzedazy", "Nr faktury", "Link do pobrania faktury", "Jurysdykcja podatkowa" ,"Waluta transakcji", "Wartosc netto w PLN", "Wartosc VAT w PLN", "Nr tabeli NBP", "Kurs NBP", "Data kursu NBP", "Suma netto w PLN", "Suma VAT w PLN")
     );
 
     //POBIERAMY PLIK CSV
@@ -50,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $priceVatIndex = 42;
     $countryVatIndex = 80;
     $currencyIndex = 53;
+    $invoiceUrlIndex = 88;
     //Ilość miejsc po przecinku
     $decimalPlaces = 2;
 
@@ -99,6 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $dateGbp[$i] = $jsonGbp_data[3][$i]["effectiveDate"];
     }
     
+    $lengthCounter = 0;
     //WŁASNA TABELA RAPORTU
     for ($i = $dataCsv_length-1; $i > 0; $i--) {
         if ($dataCsv[$i][$priceNettoIndex]!=="" && $dataCsv[$i][$countryVatIndex]!=="POLAND"){        
@@ -111,8 +120,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $invoiceNo[$i] = $dataCsv[$i][$invoiceIndex];
             $countryVat[$i] = $dataCsv[$i][$countryVatIndex];
             $currency[$i] = $dataCsv[$i][$currencyIndex];
+            $invoiceUrl[$i] = $dataCsv[$i][$invoiceUrlIndex];
             $rate = 1;
             $days=1;
+            $lengthCounter++;
             if ($currency[$i]=="EUR") {
             for ($j = 0; $j < count($jsonEur_data[3]); $j++) {
                 $ts3 = strtotime($dateSale[$i]);
@@ -151,24 +162,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $totalVat = $totalVat + $priceVatPln[$i];
             
             //Tworzymy tabelę z danymi po konwertacji
-            $rows[$i] = array();
-            $rows[$i]['DATA_SPRZEDAZY'] = $dateSale[$i];
-            $rows[$i]['NR_FAKTURY'] = $invoiceNo[$i];
-            $rows[$i]['KRAJ_DO_VAT'] = $countryVat[$i];
-            $rows[$i]['WALUTA'] = $currency[$i];
-            $rows[$i]['WARTOSC_NETTO_PLN'] = $priceNettoPln[$i];
-            $rows[$i]['WARTOSC_PODATKU_VAT_PLN'] = $priceVatPln[$i];
-            $rows[$i]['NR_TABELI_A_NBP'] = $noNbp[$i];
-            $rows[$i]['KURS_NBP'] = $rateNbp[$i];
-            $rows[$i]['DATA_KURSY_NBP'] = $dateNbp[$i];
+            $rows[$lengthCounter] = array();
+            $rows[$lengthCounter][0] = $dateSale[$i];
+            $rows[$lengthCounter][1] = $invoiceNo[$i];
+            $rows[$lengthCounter][2] = $invoiceUrl[$i];
+            $rows[$lengthCounter][3] = $countryVat[$i];
+            $rows[$lengthCounter][4] = $currency[$i];
+            $rows[$lengthCounter][5] = $priceNettoPln[$i];
+            $rows[$lengthCounter][6] = $priceVatPln[$i];
+            $rows[$lengthCounter][7] = $noNbp[$i];
+            $rows[$lengthCounter][8] = $rateNbp[$i];
+            $rows[$lengthCounter][9] = $dateNbp[$i];
+            
+            
+
         }
     }
 
-
     //Zapisywanie sumy do raportu
-    $rows[0]['WARTOSC_NETTO_PLN'] = $totalNetto;
-    $rows[0]['WARTOSC_PODATKU_VAT_PLN'] = $totalVat;
-
+    $rows[1][10] = $totalNetto;
+    $rows[1][11] = $totalVat;
     //EXPORT KONWERTOWANEGO RAPORTU DO PLIKU CSV
     array_to_csv_download($rows, "konwertowany_raport"."_".$dataCsv[$dataCsv_length-1][$dateIndex]."_".$dataCsv[1][$dateIndex].".csv", ',');
     unlink($fileCsv); 

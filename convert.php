@@ -3,6 +3,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($_FILES["myCsv"]["size"] > 10485760) {
         die ('Twój plik jest zbyt duży. Maksymalny rozmiar pliku to 10MB <a href="index.html">Zacznij od nowa</a>');
       }
+    $poland = "";
+    $germany = "";
+    $france = "";
+    $britain = "";
+    $czech = "";
+    $italy = "";
+    $spain = "";
+    
+    if (isset($_POST["Poland"])) {
+        $poland = "POLAND";
+    }
+    if (isset($_POST["Germany"])) {
+        $germany = "GERMANY";
+    }
+    if (isset($_POST["France"])) {
+        $france = "FRANCE";
+    }
+    if (isset($_POST["Britain"])) {
+        $britain = "UNITED KINGDOM";
+    }
+    if (isset($_POST["Czech"])) {
+        $czech = "CZECH REPUBLIC";
+    }
+    if (isset($_POST["Italy"])) {
+        $italy = "ITALY";
+    }
+    if (isset($_POST["Spain"])) {
+        $spain = "SPAIN";
+    }
     $fileCsv = basename($_FILES["myCsv"]["name"]);
     move_uploaded_file($_FILES["myCsv"]["tmp_name"], $fileCsv);
     $ext = pathinfo($fileCsv, PATHINFO_EXTENSION);
@@ -110,7 +139,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lengthCounter = 0;
     //WŁASNA TABELA RAPORTU
     for ($i = $dataCsv_length-1; $i > 0; $i--) {
-        if ($dataCsv[$i][$priceNettoIndex]!=="" && $dataCsv[$i][$countryVatIndex]!=="POLAND"){        
+        $country = $dataCsv[$i][$countryVatIndex];
+        if ($dataCsv[$i][$priceNettoIndex]!=="" && (($country==$poland) || ($country==$germany) || ($country==$france) || ($country==$britain) || ($country==$czech) || ($country==$italy) || ($country==$spain))){        
             $str = $dataCsv[$i][$dateIndex];
             $dateFix = explode("-",$str);
             $dataCsv[$i][11]=$dateFix[2]."-".$dateFix[1]."-".$dateFix[0];

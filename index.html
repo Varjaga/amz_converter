@@ -9,8 +9,23 @@
 <body>
     <h1>Konwerter raportu AMAZON (wersja BETA)</h1>
     <form action="convert.php" method="post" enctype="multipart/form-data">
-        <label for="myCsv">Dodaj plik raportu w formacie .csv:</label>
-        <input type="file" id="myCsv" name="myCsv">
+        <label for="myCsv"><h2>Dodaj plik raportu w formacie .csv:</h2></label>
+        <input type="file" id="myCsv" name="myCsv" required><br>
+        <h2>Zaznacz kraje jurysdykcji podatkowej które ma zawierać raport:</h2>
+        <input type="checkbox" id="Poland" name="Poland">
+        <label for="Poland">Polska</label>
+        <input type="checkbox" id="Germany" name="Germany" checked>
+        <label for="Germany">Niemcy</label>
+        <input type="checkbox" id="France" name="France" checked>
+        <label for="France">Francja</label>
+        <input type="checkbox" id="Britain" name="Britain" checked>
+        <label for="Britain">Wielka Brytania</label>
+        <input type="checkbox" id="Czech" name="Czech" checked>
+        <label for="Czech">Czechy</label>
+        <input type="checkbox" id="Italy" name="Italy" checked>
+        <label for="Italy">Włochy</label>
+        <input type="checkbox" id="Spain" name="Spain" checked>
+        <label for="Spain">Hiszpania</label>
         <input type="submit" value="KONWERTUJ">
     </form>
 
